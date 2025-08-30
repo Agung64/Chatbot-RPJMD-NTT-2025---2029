@@ -106,7 +106,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             // --- KUNCI API ANDA DIMASUKKAN DI SINI ---
             // Ganti tulisan "MASUKKAN_API_KEY_ANDA_DI_SINI" dengan Kunci API Anda yang sebenarnya.
-            const GEMINI_API_KEY = "AIzaSyBNtOykN_wnT2r2RO4rgPcD_BwOppDI89c";
+            const GEMINI_API_KEY = "";
 
             const chatMessages = document.getElementById('chat-messages');
             const userInput = document.getElementById('user-input');
@@ -148,6 +148,30 @@
                 - Pulau Timor: Pengembangan sektor pertanian dan peternakan, dengan Belu sebagai penopang pangan. Greater Kupang menjadi pusat produksi dan riset rumput laut.
                 - Pulau-pulau Kecil (Alor, Rote, Sabu): Pengembangan perikanan, rumput laut, garam, peternakan (domba), dan pariwisata bahari serta budaya.
             `;
+            
+            async function fetchWithExponentialBackoff(apiUrl, payload, maxRetries = 5, initialDelay = 1000) {
+                let delay = initialDelay;
+                for (let i = 0; i < maxRetries; i++) {
+                    try {
+                        const response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        if (response.status === 429 || response.status === 503) { // 429: Too Many Requests, 503: Service Unavailable
+                            await new Promise(resolve => setTimeout(resolve, delay));
+                            delay *= 2; // Double the delay for the next retry
+                            continue; // Retry the request
+                        }
+                        return response; // Return the response if successful or a non-retriable error
+                    } catch (error) {
+                        if (i === maxRetries - 1) throw error; // Throw error if max retries reached
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        delay *= 2;
+                    }
+                }
+                throw new Error("Gagal menghubungi server AI setelah beberapa kali percobaan.");
+            }
 
             function base64ToArrayBuffer(base64) {
                 const binaryString = window.atob(base64);
@@ -203,11 +227,8 @@
                      const payload = {
                         contents: [{ parts: [{ text: prompt }] }],
                     };
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
+                    const response = await fetchWithExponentialBackoff(apiUrl, payload);
+                    
                     if (!response.ok) {
                         const errorBody = await response.json();
                         console.error("API Error:", errorBody);
@@ -245,11 +266,7 @@
                         model: "gemini-2.5-flash-preview-tts"
                     };
 
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
+                    const response = await fetchWithExponentialBackoff(apiUrl, payload);
 
                     if (!response.ok) {
                         const errorText = await response.text();
@@ -466,5 +483,4 @@
     </script>
 </body>
 </html>
-
 
