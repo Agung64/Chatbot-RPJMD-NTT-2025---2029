@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot RPJMD Provinsi NTT 2025-2029</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        #chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 800px;
+        }
+        #chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #a0aec0 #edf2f7;
+        }
+        #chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+        #chat-messages::-webkit-scrollbar-track {
+            background: #edf2f7;
+        }
+        #chat-messages::-webkit-scrollbar-thumb {
+            background-color: #a0aec0;
+            border-radius: 10px;
+        }
+        .bot-message, .user-message {
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeIn 0.5s forwards;
+        }
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .loader {
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .speaker-icon {
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .speaker-icon:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div id="chat-container" class="w-full max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl border border-gray-200">
+        <!-- Header -->
+        <div class="p-4 border-b bg-red-600 text-white rounded-t-2xl shadow-md">
+            <h1 class="text-xl font-bold text-center">Chatbot RPJMD Provinsi NTT</h1>
+            <p class="text-sm text-center text-red-100">Periode 2025-2029 (Didukung oleh Artificial Intelligence)</p>
+            <p class="text-xs text-center text-red-200 mt-2">Persembahan Oleh : Ir. R. Agung Eko Pitono, MT</p>
+            <p class="text-xs text-center text-red-200">WA: 085172481940</p>
+        </div>
+
+        <!-- Messages -->
+        <div id="chat-messages" class="p-6 space-y-4">
+            <!-- Pesan akan ditambahkan di sini -->
+        </div>
+
+        <!-- Predefined Features -->
+        <div id="predefined-questions" class="p-4 border-t border-gray-200">
+             <p class="text-sm font-semibold text-gray-600 mb-2 text-center">Coba fitur AI:</p>
+            <div class="flex flex-wrap gap-2 justify-center">
+                <button id="generate-program-btn" class="bg-purple-100 text-purple-800 text-sm font-medium px-3 py-1 rounded-full hover:bg-purple-200 transition-colors">✨ Buat Ide Program</button>
+                <button id="summarize-btn" class="bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full hover:bg-green-200 transition-colors">📄 Ringkas Dokumen</button>
+            </div>
+        </div>
+
+        <!-- Input -->
+        <div class="p-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
+            <div class="flex items-center space-x-3">
+                <input type="text" id="user-input" placeholder="Tanya apa saja tentang dokumen RPJMD..." class="flex-1 w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow">
+                <button id="send-btn" class="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-transform transform hover:scale-110">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const chatMessages = document.getElementById('chat-messages');
+            const userInput = document.getElementById('user-input');
+            const sendBtn = document.getElementById('send-btn');
+            const summarizeBtn = document.getElementById('summarize-btn');
+            const generateProgramBtn = document.getElementById('generate-program-btn');
+
+            let isWaitingForProgramTopic = false;
+
+            // --- KONTEN DOKUMEN BARU DIMASUKKAN DI SINI ---
+            const radDocumentContext = `
+                DOKUMEN: RENCANA PEMBANGUNAN JANGKA MENENGAH DAERAH (RPJMD) PROVINSI NUSA TENGGARA TIMUR TAHUN 2025-2029.
+
+                VISI: "NTT Maju, Sehat, Cerdas, Sejahtera dan Berkelanjutan"
+
+                MISI:
+                1. Memastikan infrastruktur berkelanjutan demi mewujudkan ekonomi berbasis potensi daerah yang berdaya saing.
+                2. Memperluas pelayanan kesehatan dan jaminan sosial yang lebih inklusif, terjangkau, dan mudah diakses.
+                3. Menghadirkan pendidikan berkualitas yang merata, partisipatif, dan tepat sasaran.
+                4. Mewujudkan Kesejahteraan sosial, kesetaraan akses, serta kualitas hidup yang berkeadilan dan madani bagi seluruh lapisan Masyarakat.
+                5. Mewujudkan Pembangunan berkelanjutan melalui pengelolaan sumberdaya alam dan manusia yang bijak serta pemenuhan Hak Asasi Manusia (HAM) untuk menciptakan masa depan yang inklusif.
+
+                SISTEMATIKA DOKUMEN:
+                - BAB I PENDAHULUAN: Latar belakang, dasar hukum, maksud dan tujuan penyusunan RPJMD.
+                - BAB II GAMBARAN UMUM DAERAH: Menjelaskan aspek geografi, demografi, kesejahteraan masyarakat, daya saing daerah, pelayanan umum, gambaran keuangan, serta permasalahan dan isu strategis.
+                - BAB III VISI, MISI, DAN PROGRAM PRIORITAS: Menjabarkan visi, misi, tujuan, sasaran, strategi, arah kebijakan, dan program prioritas pembangunan.
+                - BAB IV PROGRAM PERANGKAT DAERAH DAN KINERJA: Merinci program setiap perangkat daerah beserta pagu indikatif dan indikator kinerja.
+                - BAB V PENUTUP: Menjelaskan kaidah pelaksanaan dan pengembangan pembiayaan pembangunan.
+                
+                ISU STRATEGIS UTAMA:
+                - Transformasi Sosial: Peningkatan kualitas hidup manusia melalui kesehatan, pendidikan, dan perlindungan sosial. Mengatasi stunting, kemiskinan, dan meningkatkan mutu pendidikan.
+                - Transformasi Ekonomi: Peningkatan produksi dan produktivitas sektor primer (pertanian, peternakan, perikanan) untuk mendukung hilirisasi dan ketahanan pangan. Mengembangkan industri, pariwisata, ekonomi kreatif, dan UMKM.
+                - Transformasi Tata Kelola: Peningkatan efektivitas, akuntabilitas, dan profesionalisme birokrasi, termasuk penguatan kemampuan fiskal daerah dan kualitas pelayanan publik.
+                - Ketahanan Sosial, Budaya dan Ekologi: Memperkuat ketahanan sosial, budaya, dan lingkungan sebagai landasan pembangunan, termasuk pengelolaan energi baru terbarukan (EBT) dan mitigasi perubahan iklim.
+
+                ARAH PEMBANGUNAN PER WILAYAH:
+                - Pulau Sumba: Pengembangan pertanian, peternakan, pariwisata budaya megalitik, dan menjadi Sumba Iconic Island untuk EBT.
+                - Pulau Flores dan Lembata: Kawasan pariwisata berbasis ekowisata premium, dengan Labuan Bajo dan Kelimutu sebagai prioritas. Menjadi pusat produksi dan industri untuk komoditas seperti kopi dan kakao.
+                - Pulau Timor: Pengembangan sektor pertanian dan peternakan, dengan Belu sebagai penopang pangan. Greater Kupang menjadi pusat produksi dan riset rumput laut.
+                - Pulau-pulau Kecil (Alor, Rote, Sabu): Pengembangan perikanan, rumput laut, garam, peternakan (domba), dan pariwisata bahari serta budaya.
+            `;
+
+            function base64ToArrayBuffer(base64) {
+                const binaryString = window.atob(base64);
+                const len = binaryString.length;
+                const bytes = new Uint8Array(len);
+                for (let i = 0; i < len; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                return bytes.buffer;
+            }
+
+            function pcmToWav(pcmData, sampleRate) {
+                const numChannels = 1;
+                const bitsPerSample = 16;
+                const blockAlign = (numChannels * bitsPerSample) / 8;
+                const byteRate = sampleRate * blockAlign;
+                const dataSize = pcmData.length * (bitsPerSample / 8);
+                const buffer = new ArrayBuffer(44 + dataSize);
+                const view = new DataView(buffer);
+
+                function writeString(view, offset, string) {
+                    for (let i = 0; i < string.length; i++) {
+                        view.setUint8(offset + i, string.charCodeAt(i));
+                    }
+                }
+
+                writeString(view, 0, 'RIFF');
+                view.setUint32(4, 36 + dataSize, true);
+                writeString(view, 8, 'WAVE');
+                writeString(view, 12, 'fmt ');
+                view.setUint32(16, 16, true);
+                view.setUint16(20, 1, true);
+                view.setUint16(22, numChannels, true);
+                view.setUint32(24, sampleRate, true);
+                view.setUint32(28, byteRate, true);
+                view.setUint16(32, blockAlign, true);
+                view.setUint16(34, bitsPerSample, true);
+                writeString(view, 36, 'data');
+                view.setUint32(40, dataSize, true);
+
+                const pcm16 = new Int16Array(pcmData.buffer);
+                 for (let i = 0; i < pcm16.length; i++) {
+                    view.setInt16(44 + i * 2, pcm16[i], true);
+                }
+
+                return new Blob([view], { type: 'audio/wav' });
+            }
+
+            async function callGemini(prompt) {
+                const apiKey = ""
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+                
+                try {
+                     const payload = {
+                        contents: [{ parts: [{ text: prompt }] }],
+                    };
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) {
+                        const errorBody = await response.json();
+                        console.error("API Error:", errorBody);
+                        return `Terjadi kesalahan saat menghubungi AI: ${errorBody.error.message}`;
+                    }
+                    const result = await response.json();
+                    if (result.candidates && result.candidates.length > 0 && result.candidates[0].content.parts[0].text) {
+                        return result.candidates[0].content.parts[0].text;
+                    }
+                    return "Maaf, tidak ada respons dari AI.";
+                } catch (error) {
+                    console.error("Fetch Error:", error);
+                    return "Gagal terhubung ke server AI. Mohon coba lagi nanti.";
+                }
+            }
+            
+            async function playTextToSpeech(textToSpeak) {
+                const loadingMessageId = `loading-tts-${Date.now()}`;
+                const existingLoader = document.querySelector('.tts-loader-container');
+                if (existingLoader) existingLoader.remove();
+
+                const loaderContainer = document.createElement('div');
+                loaderContainer.classList.add('tts-loader-container', 'p-3');
+                loaderContainer.innerHTML = `<div id="${loadingMessageId}" class="flex items-center gap-2 text-sm text-gray-500">Memproses audio... <div class="loader"></div></div>`;
+                chatMessages.appendChild(loaderContainer);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                try {
+                    const apiKey = ""
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+                     const payload = {
+                        contents: [{ parts: [{ text: `Ucapkan dengan jelas: ${textToSpeak}` }] }],
+                        generationConfig: {
+                            responseModalities: ["AUDIO"],
+                        },
+                        model: "gemini-2.5-flash-preview-tts"
+                    };
+
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        let errorMessage = errorText;
+                        try {
+                            const errorData = JSON.parse(errorText);
+                            errorMessage = errorData.error || JSON.stringify(errorData);
+                        } catch (e) {
+                            // Leave error as raw text
+                        }
+                        throw new Error(errorMessage);
+                    }
+
+                    const result = await response.json();
+                    const audioData = result?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+                    const mimeType = result?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.mimeType;
+
+                    if (audioData && mimeType) {
+                        const sampleRateMatch = mimeType.match(/rate=(\d+)/);
+                        const sampleRate = sampleRateMatch ? parseInt(sampleRateMatch[1], 10) : 24000;
+                        
+                        const pcmData = base64ToArrayBuffer(audioData);
+                        const pcm16 = new Int16Array(pcmData);
+                        const wavBlob = pcmToWav(pcm16, sampleRate);
+                        const audioUrl = URL.createObjectURL(wavBlob);
+                        
+                        const audio = new Audio(audioUrl);
+                        audio.play();
+                    } else {
+                        throw new Error("Data audio tidak valid dari server.");
+                    }
+                } catch (error) {
+                    console.error('TTS Error:', error);
+                    addMessage(createMessageElement('bot', { message: `Maaf, audio tidak dapat diputar. Kesalahan: ${error.message}` }));
+                } finally {
+                     const loadingElement = document.getElementById(loadingMessageId);
+                     if(loadingElement) loadingElement.parentElement.remove();
+                }
+            }
+
+            function formatBotMessage(text) {
+                let html = text;
+                // Replace newline characters with <br> FIRST to correctly handle multiline regex
+                html = html.replace(/\n/g, '<br>');
+                // Replace ### heading with a styled paragraph
+                html = html.replace(/### (.*?)(<br>|$)/g, '<p class="font-semibold mt-3 mb-1">$1</p>');
+                // Replace markdown bold **text** with <strong>text</strong> using a replacer function
+                html = html.replace(/\*\*(.*?)\*\*/g, (match, p1) => `<strong>${p1}</strong>`);
+                 // Replace * item with a simple styled paragraph for cleaner look than a list in a small bubble
+                html = html.replace(/^\* (.*$)/gm, (match, p1) => {
+                    return `<p class="ml-4 -indent-4">${p1.replace(/<br>$/,'')}</p>`;
+                });
+
+                return html;
+            }
+
+            function createMessageElement(sender, options = {}) {
+                const { message = '', textForTts = '', messageId = '' } = options;
+                const messageElement = document.createElement('div');
+                if (messageId) {
+                    messageElement.id = messageId;
+                }
+                messageElement.classList.add('flex', 'items-end', 'gap-2.5', 'w-full');
+                
+                const text = textForTts || message;
+
+                if (sender === 'bot') {
+                    messageElement.classList.add('justify-start', 'bot-message');
+                    messageElement.innerHTML = `
+                        <div class="w-8 h-8 rounded-full bg-red-200 flex items-center justify-center font-bold text-red-600 flex-shrink-0">B</div>
+                        <div class="flex flex-col gap-1 max-w-xs md:max-w-md">
+                            <div class="p-3 rounded-lg rounded-bl-none bg-red-500 text-white break-words">
+                                <div class="text-sm font-normal leading-snug">${message}</div>
+                            </div>
+                        </div>
+                        <svg data-text-to-speak="${text.replace(/"/g, '&quot;')}" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-volume-up-fill text-gray-500 speaker-icon" viewBox="0 0 16 16">
+                            <path d="M11.536 14.01A8.47 8.47 0 0 0 14.026 8a8.47 8.47 0 0 0-2.49-6.01l-.708.707A7.48 7.48 0 0 1 13.025 8c0 2.071-.84 3.946-2.197 5.303z"/>
+                            <path d="M10.121 12.596A6.48 6.48 0 0 0 12.025 8a6.48 6.48 0 0 0-1.904-4.596l-.707.707A5.48 5.48 0 0 1 11.025 8a5.48 5.48 0 0 1-1.61 3.89z"/>
+                            <path d="M8.707 11.182A4.5 4.5 0 0 0 10.025 8a4.5 4.5 0 0 0-1.318-3.182L8 5.525A3.5 3.5 0 0 1 9.025 8 3.5 3.5 0 0 1 8 10.475zM6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06z"/>
+                        </svg>
+                    `;
+                } else {
+                    messageElement.classList.add('justify-end', 'user-message');
+                    messageElement.innerHTML = `
+                        <div class="flex flex-col gap-1 max-w-xs md:max-w-md">
+                           <div class="p-3 rounded-lg rounded-br-none bg-gray-200 text-gray-800 break-words">
+                                <p class="text-sm font-normal leading-snug">${message}</p>
+                           </div>
+                        </div>
+                        <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center font-bold text-gray-700 flex-shrink-0">U</div>
+                    `;
+                }
+                return messageElement;
+            }
+            
+            function addMessage(element) {
+                 chatMessages.appendChild(element);
+                 chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            function updateMessage(messageId, newMessage, newTextForTts) {
+                const messageElement = document.getElementById(messageId);
+                if (messageElement) {
+                    const newContent = createMessageElement('bot', { message: newMessage, textForTts: newTextForTts, messageId: messageId });
+                    messageElement.innerHTML = newContent.innerHTML;
+                    const newSpeakerIcon = messageElement.querySelector('.speaker-icon');
+                    if(newSpeakerIcon) {
+                        newSpeakerIcon.setAttribute('data-text-to-speak', (newTextForTts || newMessage).replace(/"/g, '&quot;'));
+                    }
+                }
+            }
+
+
+            async function handleSend() {
+                const userText = userInput.value.trim();
+                if (!userText) return;
+
+                if (isWaitingForProgramTopic) {
+                    addMessage(createMessageElement('user', { message: userText }));
+                    userInput.value = '';
+                    await generateProgramIdea(userText);
+                    isWaitingForProgramTopic = false;
+                    userInput.placeholder = "Tanya apa saja tentang dokumen RPJMD...";
+                } else {
+                    addMessage(createMessageElement('user', { message: userText }));
+                    userInput.value = '';
+
+                    const loadingMessageId = `loading-${Date.now()}`;
+                    addMessage(createMessageElement('bot', { message: `<div class="loader"></div>`, messageId: loadingMessageId }));
+
+                    const prompt = `
+                        Anda adalah asisten virtual ahli tentang dokumen Rencana Pembangunan Jangka Menengah Daerah (RPJMD) Provinsi NTT 2025-2029.
+                        Gunakan konteks berikut untuk menjawab pertanyaan pengguna. Jawab dengan ramah, informatif, dan dalam Bahasa Indonesia.
+                        Gunakan '###' untuk subjudul. Gunakan format penomoran (contoh: 1. Poin pertama, 2. Poin kedua) untuk daftar. Jangan gunakan format tebal (**).
+                        Konteks Dokumen: """${radDocumentContext}"""
+                        Pertanyaan Pengguna: "${userText}"
+                        Jawaban Anda:
+                    `;
+
+                    const botResponse = await callGemini(prompt);
+                    const formattedResponse = formatBotMessage(botResponse);
+                    updateMessage(loadingMessageId, formattedResponse, botResponse);
+                }
+            }
+            
+            async function generateProgramIdea(topic) {
+                const loadingMessageId = `loading-idea-${Date.now()}`;
+                addMessage(createMessageElement('bot', { message: `<div class="loader"></div>`, messageId: loadingMessageId }));
+
+                const prompt = `
+                    Anda adalah seorang perencana program pembangunan yang inovatif dan ahli tentang dokumen RPJMD NTT.
+                    Berdasarkan dokumen RPJMD NTT, buatlah 3 ide program konkret untuk topik "${topic}".
+                    Sajikan dalam format yang terstruktur. Untuk setiap ide, gunakan judul yang jelas dan awali dengan '###' (contoh: ### Ide Program 1: Nama Ide).
+                    Untuk daftar seperti "Contoh Kegiatan", selalu gunakan format penomoran (1., 2., 3.). Jangan gunakan format bullet point atau asterisks (*). Jangan gunakan format tebal (**).
+                    Setelah penjelasan setiap ide program, tambahkan subjudul '### Pendekatan Pentahelix' dan jelaskan secara singkat dalam format daftar bernomor peran dari 5 elemen (1. Pemerintah, 2. Akademisi, 3. Bisnis, 4. Komunitas, dan 5. Media) dalam menjalankan program tersebut.
+                    Konteks Dokumen: """${radDocumentContext}"""
+                `;
+                const botResponse = await callGemini(prompt);
+                const formattedResponse = formatBotMessage(botResponse);
+                updateMessage(loadingMessageId, formattedResponse, botResponse);
+            }
+
+            async function handleSummarize() {
+                addMessage(createMessageElement('user', { message: "Tolong ringkas dokumen RPJMD." }));
+                
+                const loadingMessageId = `loading-${Date.now()}`;
+                addMessage(createMessageElement('bot', { message: `<div class="loader"></div>`, messageId: loadingMessageId }));
+
+                const prompt = `
+                    Ringkaslah konteks dokumen berikut dalam 3-4 kalimat utama. Fokus pada Visi, Misi, dan Isu Strategis utama. Jangan gunakan format markdown seperti tanda bintang ganda (**) atau bullet points (*) atau subjudul (###).
+                    Konteks Dokumen: """${radDocumentContext}"""
+                `;
+                const botResponse = await callGemini(prompt);
+                const formattedResponse = formatBotMessage(botResponse);
+                updateMessage(loadingMessageId, formattedResponse, botResponse);
+            }
+
+            sendBtn.addEventListener('click', handleSend);
+            userInput.addEventListener('keypress', (e) => e.key === 'Enter' && handleSend());
+            
+            generateProgramBtn.addEventListener('click', () => {
+                isWaitingForProgramTopic = true;
+                const promptMessage = "Tentu! Silakan ketik topik atau sektor yang Anda minati (contoh: pariwisata di Sumba, pendidikan vokasi).";
+                addMessage(createMessageElement('bot', { message: promptMessage, textForTts: promptMessage }));
+                userInput.placeholder = "Ketik topik program di sini...";
+                userInput.focus();
+            });
+
+            summarizeBtn.addEventListener('click', handleSummarize);
+            
+            chatMessages.addEventListener('click', function(event) {
+                const speakerIcon = event.target.closest('.speaker-icon');
+                if (speakerIcon) {
+                    const textToSpeak = speakerIcon.getAttribute('data-text-to-speak');
+                    if (textToSpeak) {
+                        playTextToSpeech(textToSpeak);
+                    }
+                }
+            });
+
+            function showWelcomeMessage() {
+                const welcomeText = `
+                    <p class="font-semibold">Selamat datang di Chatbot Informasi RPJMD Provinsi NTT 2025-2029!</p>
+                    <p class="mt-2">Saya siap membantu Anda memahami dokumen Rencana Pembangunan Jangka Menengah Daerah. Apa yang ingin Anda ketahui?</p>
+                `;
+                const welcomeTextForTts = "Selamat datang di Chatbot Informasi RPJMD Provinsi NTT 2025-2029! Saya siap membantu Anda. Apa yang ingin Anda ketahui?";
+                setTimeout(() => {
+                    addMessage(createMessageElement('bot', { message: welcomeText, textForTts: welcomeTextForTts }));
+                }, 500);
+            }
+
+            showWelcomeMessage();
+        });
+    </script>
+</body>
+</html>
+
