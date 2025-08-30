@@ -104,6 +104,10 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // --- KUNCI API ANDA DIMASUKKAN DI SINI ---
+            // Ganti tulisan "MASUKKAN_API_KEY_ANDA_DI_SINI" dengan Kunci API Anda yang sebenarnya.
+            const GEMINI_API_KEY = "AIzaSyBNtOykN_wnT2r2RO4rgPcD_BwOppDI89c";
+
             const chatMessages = document.getElementById('chat-messages');
             const userInput = document.getElementById('user-input');
             const sendBtn = document.getElementById('send-btn');
@@ -193,8 +197,7 @@
             }
 
             async function callGemini(prompt) {
-                const apiKey = ""
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${GEMINI_API_KEY}`;
                 
                 try {
                      const payload = {
@@ -233,8 +236,7 @@
                 chatMessages.scrollTop = chatMessages.scrollHeight;
 
                 try {
-                    const apiKey = ""
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${GEMINI_API_KEY}`;
                      const payload = {
                         contents: [{ parts: [{ text: `Ucapkan dengan jelas: ${textToSpeak}` }] }],
                         generationConfig: {
@@ -464,4 +466,5 @@
     </script>
 </body>
 </html>
+
 
